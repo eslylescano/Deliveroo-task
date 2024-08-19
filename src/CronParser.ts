@@ -15,26 +15,27 @@ export class CronParser {
         return this.parseField(hourField, 0, 23);
     }
 
+    getDayOfMonth(): number[] {
+        const dayOfMonthField = this.cronExpression.split(' ')[2];
+        return this.parseField(dayOfMonthField, 1, 31);
+    }
+
     private parseField(field: string, min: number, max: number): number[] {
         const result: Set<number> = new Set();
 
-        // Wildcard case
         if (field === '*') {
             return Array.from({ length: max - min + 1 }, (_, i) => i + min);
         }
 
-        // Handle intervals (e.g., */5 or 0-10/2)
         if (field.includes('/')) {
             const [base, interval] = field.split('/');
             const step = parseInt(interval, 10);
 
             if (base === '*') {
-                // * / interval
                 for (let i = min; i <= max; i += step) {
                     result.add(i);
                 }
             } else {
-                // Range or single value / interval
                 const start = this.parseRangeOrSingle(base, min, max);
                 for (let i = start; i <= max; i += step) {
                     result.add(i);
@@ -43,7 +44,6 @@ export class CronParser {
             return Array.from(result).filter(n => n >= min && n <= max);
         }
 
-        // Handle lists (e.g., 0,5,10-15)
         if (field.includes(',')) {
             const parts = field.split(',');
             parts.forEach(part => {
@@ -56,12 +56,10 @@ export class CronParser {
             return Array.from(result).sort((a, b) => a - b);
         }
 
-        // Handle ranges (e.g., 5-15)
         if (field.includes('-')) {
             return this.parseRange(field, min, max);
         }
 
-        // Handle single value
         return [this.parseRangeOrSingle(field, min, max)];
     }
 
