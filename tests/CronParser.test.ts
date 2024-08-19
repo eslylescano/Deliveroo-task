@@ -213,5 +213,48 @@ describe('CronParser', () => {
             expect(cronParser.getMonth()).toEqual([2, 5, 8]);
         });
     });
+
+
+    describe('getDayOfWeek', () => {
+        it('should parse the day of the week field correctly when specific values are given', () => {
+            const cronParser = new CronParser('0 0 * * 1,3,5 /usr/bin/find');
+            expect(cronParser.getDayOfWeek()).toEqual([1, 3, 5]); // Monday, Wednesday, Friday
+        });
+
+        it('should parse the day of the week field correctly when using the "every" operator', () => {
+            const cronParser = new CronParser('0 0 * * */2 /usr/bin/find');
+            expect(cronParser.getDayOfWeek()).toEqual([0, 2, 4, 6]); // Sunday, Tuesday, Thursday, Saturday
+        });
+
+        it('should parse the day of the week field correctly when a single value is given', () => {
+            const cronParser = new CronParser('0 0 * * 1 /usr/bin/find');
+            expect(cronParser.getDayOfWeek()).toEqual([1]); // Monday
+        });
+
+        it('should parse the day of the week field correctly when using a range', () => {
+            const cronParser = new CronParser('0 0 * * 1-5 /usr/bin/find');
+            expect(cronParser.getDayOfWeek()).toEqual([1, 2, 3, 4, 5]); // Monday to Friday
+        });
+
+        it('should parse the day of the week field correctly when using mixed specifications', () => {
+            const cronParser = new CronParser('0 0 * * 1,3-5 /usr/bin/find');
+            expect(cronParser.getDayOfWeek()).toEqual([1, 3, 4, 5]); // Monday, Wednesday, Thursday, Friday
+        });
+
+        it('should handle complex day of the week fields with ranges and specific values', () => {
+            const cronParser = new CronParser('0 0 * * 0,2-4,6 /usr/bin/find');
+            expect(cronParser.getDayOfWeek()).toEqual([0, 2, 3, 4, 6]); // Sunday, Tuesday, Wednesday, Thursday, Saturday
+        });
+
+        it('should handle day of the week fields with wildcards', () => {
+            const cronParser = new CronParser('0 0 * * * /usr/bin/find');
+            expect(cronParser.getDayOfWeek()).toEqual([0, 1, 2, 3, 4, 5, 6]); // Every day of the week
+        });
+
+        it('should handle a cron expression with an interval and specific days', () => {
+            const cronParser = new CronParser('0 0 * * 1,5 /usr/bin/find');
+            expect(cronParser.getDayOfWeek()).toEqual([1, 5]); // Monday and Friday
+        });
+    });
       
 });
