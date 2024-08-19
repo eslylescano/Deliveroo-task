@@ -25,6 +25,11 @@ export class CronParser {
         return this.parseField(monthField, 1, 12);
     }
 
+    getDayOfWeek(): number[] {
+        const dayOfWeekField = this.cronExpression.split(' ')[4];
+        return this.parseField(dayOfWeekField, 0, 6);
+    }
+
     private parseField(field: string, min: number, max: number): number[] {
         const result: Set<number> = new Set();
 
