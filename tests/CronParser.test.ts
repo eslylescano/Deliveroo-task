@@ -49,5 +49,63 @@ describe('CronParser', () => {
         });
       
       });
+
+
+      describe('getHours', () => {
+        it('should parse the hour field correctly when the interval is 3', () => {
+            const cronParser = new CronParser('0 */3 * * * /usr/bin/find');
+            expect(cronParser.getHours()).toEqual([0, 3, 6, 9, 12, 15, 18, 21]);
+        });
+
+        it('should parse the hour field correctly when specific values are given', () => {
+            const cronParser = new CronParser('0 1,5,9,13 * * * /usr/bin/find');
+            expect(cronParser.getHours()).toEqual([1, 5, 9, 13]);
+        });
+
+        it('should parse the hour field correctly when a single value is given', () => {
+            const cronParser = new CronParser('0 14 * * * /usr/bin/find');
+            expect(cronParser.getHours()).toEqual([14]);
+        });
+
+        it('should parse the hour field correctly when using the "every" operator', () => {
+            const cronParser = new CronParser('0 0-23 * * * /usr/bin/find');
+            expect(cronParser.getHours()).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]);
+        });
+
+        it('should parse the hour field correctly when using a range', () => {
+            const cronParser = new CronParser('0 9-17 * * * /usr/bin/find');
+            expect(cronParser.getHours()).toEqual([9, 10, 11, 12, 13, 14, 15, 16, 17]);
+        });
+
+        it('should parse the hour field correctly when using mixed specifications', () => {
+            const cronParser = new CronParser('0 1,5,9 10-15 * * /usr/bin/find');
+            expect(cronParser.getHours()).toEqual([1, 5, 9]);
+        });
+
+        it('should handle the hour field when using the "every" operator with a different interval', () => {
+            const cronParser = new CronParser('0 0-23/2 * * * /usr/bin/find');
+            expect(cronParser.getHours()).toEqual([0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22]);
+        });
+
+        it('should handle complex hour fields with ranges and specific values', () => {
+            const cronParser = new CronParser('0 0,6-9,12 2 * * /usr/bin/find');
+            expect(cronParser.getHours()).toEqual([0, 6, 7, 8, 9, 12]);
+        });
+
+        it('should handle hour fields with wildcards', () => {
+            const cronParser = new CronParser('0 * * * * /usr/bin/find');
+            expect(cronParser.getHours()).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]);
+        });
+
+        it('should handle a cron expression with a single day of the week and specific hours', () => {
+            const cronParser = new CronParser('0 8,12,16 * * 1 /usr/bin/find');
+            expect(cronParser.getHours()).toEqual([8, 12, 16]);
+        });
+
+        it('should handle a cron expression with an interval and specific hours', () => {
+            const cronParser = new CronParser('0 0,6,12,18 * * * /usr/bin/find');
+            expect(cronParser.getHours()).toEqual([0, 6, 12, 18]);
+        });
+    });
       
 });
