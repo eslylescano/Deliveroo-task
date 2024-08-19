@@ -84,4 +84,21 @@ export class CronParser {
         if (isNaN(start) || isNaN(end) || start > end) return [];
         return Array.from({ length: end - start + 1 }, (_, i) => start + i).filter(n => n >= min && n <= max);
     }
+
+    print(): string {
+        const minutes = this.getMinutes().join(' ');
+        const hours = this.getHours().join(' ');
+        const dayOfMonth = this.getDayOfMonth().join(' ');
+        const month = this.getMonth().join(' ');
+        const dayOfWeek = this.getDayOfWeek().join(' ');
+
+        const command = this.cronExpression.split(' ').slice(5).join(' ');
+
+        return `minute ${minutes}\n` +
+               `hour ${hours}\n` +
+               `day of month ${dayOfMonth}\n` +
+               `month ${month}\n` +
+               `day of week ${dayOfWeek}\n` +
+               `command ${command}`;
+    }
 }
