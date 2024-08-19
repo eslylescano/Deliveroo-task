@@ -160,5 +160,58 @@ describe('CronParser', () => {
           expect(cronParser.getDayOfMonth()).toEqual([1, 10, 20]);
         });
       });
+
+
+      describe('getMonth', () => {
+        it('should parse the month field correctly when the interval is 3', () => {
+            const cronParser = new CronParser('0 0 1 */3 * /usr/bin/find');
+            expect(cronParser.getMonth()).toEqual([1, 4, 7, 10]);
+        });
+
+        it('should parse the month field correctly when specific values are given', () => {
+            const cronParser = new CronParser('0 0 1 2,5,8,11 * /usr/bin/find');
+            expect(cronParser.getMonth()).toEqual([2, 5, 8, 11]);
+        });
+
+        it('should parse the month field correctly when a single value is given', () => {
+            const cronParser = new CronParser('0 0 1 6 * /usr/bin/find');
+            expect(cronParser.getMonth()).toEqual([6]);
+        });
+
+        it('should parse the month field correctly when using the "every" operator', () => {
+            const cronParser = new CronParser('0 0 1 1-12 * /usr/bin/find');
+            expect(cronParser.getMonth()).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+        });
+
+        it('should parse the month field correctly when using a range', () => {
+            const cronParser = new CronParser('0 0 1 3-6 * /usr/bin/find');
+            expect(cronParser.getMonth()).toEqual([3, 4, 5, 6]);
+        });
+
+        it('should parse the month field correctly when using mixed specifications', () => {
+            const cronParser = new CronParser('0 0 1 2,5-8,11 * /usr/bin/find');
+            expect(cronParser.getMonth()).toEqual([2, 5, 6, 7, 8, 11]);
+        });
+
+        it('should handle complex month fields with ranges and specific values', () => {
+            const cronParser = new CronParser('0 0 1 1,3-6,9 5 * /usr/bin/find');
+            expect(cronParser.getMonth()).toEqual([1, 3, 4, 5, 6, 9]);
+        });
+
+        it('should handle month fields with wildcards', () => {
+            const cronParser = new CronParser('0 0 1 * * /usr/bin/find');
+            expect(cronParser.getMonth()).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+        });
+
+        it('should handle a cron expression with specific months and days of the week', () => {
+            const cronParser = new CronParser('0 0 1 1,6 * 0 /usr/bin/find');
+            expect(cronParser.getMonth()).toEqual([1, 6]);
+        });
+
+        it('should handle a cron expression with an interval and specific months', () => {
+            const cronParser = new CronParser('0 0 1 2,5,8 * /usr/bin/find');
+            expect(cronParser.getMonth()).toEqual([2, 5, 8]);
+        });
+    });
       
 });
