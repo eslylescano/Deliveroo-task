@@ -20,6 +20,11 @@ export class CronParser {
         return this.parseField(dayOfMonthField, 1, 31);
     }
 
+    getMonth(): number[] {
+        const monthField = this.cronExpression.split(' ')[3];
+        return this.parseField(monthField, 1, 12);
+    }
+
     private parseField(field: string, min: number, max: number): number[] {
         const result: Set<number> = new Set();
 
