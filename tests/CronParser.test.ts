@@ -256,5 +256,45 @@ describe('CronParser', () => {
             expect(cronParser.getDayOfWeek()).toEqual([1, 5]); // Monday and Friday
         });
     });
+
+
+    describe('print', () => {
+        it('should correctly format output for "*/15 0 1,15 * 1-5 /usr/bin/find"', () => {
+            const cronParser = new CronParser('*/15 0 1,15 * 1-5 /usr/bin/find');
+            expect(cronParser.print()).toEqual(
+                'minute 0 15 30 45\n' +
+                'hour 0\n' +
+                'day of month 1 15\n' +
+                'month 1 2 3 4 5 6 7 8 9 10 11 12\n' +
+                'day of week 1 2 3 4 5\n' +
+                'command /usr/bin/find'
+            );
+        });
+
+
+        it('should handle "0 */2 1-5 1,6 1-5 /usr/bin/find"', () => {
+            const cronParser = new CronParser('0 */2 1-5 1,6 1-5 /usr/bin/find');
+            expect(cronParser.print()).toEqual(
+                'minute 0\n' +
+                'hour 0 2 4 6 8 10 12 14 16 18 20 22\n' +
+                'day of month 1 2 3 4 5\n' +
+                'month 1 6\n' +
+                'day of week 1 2 3 4 5\n' +
+                'command /usr/bin/find'
+            );
+        });
+
+        it('should handle "15 0 1-5 2,8 0,6 /usr/bin/find"', () => {
+            const cronParser = new CronParser('15 0 1-5 2,8 0,6 /usr/bin/find');
+            expect(cronParser.print()).toEqual(
+                'minute 15\n' +
+                'hour 0\n' +
+                'day of month 1 2 3 4 5\n' +
+                'month 2 8\n' +
+                'day of week 0 6\n' +
+                'command /usr/bin/find'
+            );
+        });
+    });
       
 });
